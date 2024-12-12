@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login Page</title>
+        <!-- Bootstrap CSS CDN -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <!-- Information Card -->
+                    <div class="card mb-4 shadow">
+                        <div class="card-body">
+                            <h4 class="card-title">Login Page with Captcha</h4>
+                            <p class="card-text">
+                                This is an example of a login page with
+                                username, password and a simple mathematical
+                                captcha.
+                            </p>
+                            <div class="alert alert-info">
+                                <strong>Demo Credentials:</strong><br />
+                                Username: admin@admin.com<br />
+                                Password: password<br />
+                                Solve the captcha by adding the numbers
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login Card -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">Login</h3>
+                            <!-- Error Badge (Hidden by default) -->
+                            <div
+                                id="errorBadge"
+                                class="alert alert-danger d-none"
+                            ></div>
+                            <form
+                                id="loginForm"
+                                action="welcome.html"
+                                method="get"
+                            >
+                                <div class="mb-3">
+                                    <label for="username" class="form-label"
+                                        >Username</label
+                                    >
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        id="username"
+                                        name="username"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label"
+                                        >Password</label
+                                    >
+                                    <input
+                                        type="password"
+                                        class="form-control"
+                                        id="password"
+                                        name="password"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label
+                                        for="captcha"
+                                        class="form-label"
+                                        id="captchaQuestion"
+                                        >What is
+                                    </label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="captcha"
+                                        required
+                                    />
+                                </div>
+                                <input
+                                    type="hidden"
+                                    name="loginTime"
+                                    id="loginTime"
+                                />
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    Login
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            // Captcha configuration
+            const numbers = {
+                One: 1,
+                Two: 2,
+                Three: 3,
+                Four: 4,
+                Five: 5,
+                Six: 6,
+                Seven: 7,
+                Eight: 8,
+                Nine: 9,
+                Ten: 10,
+            };
+
+            let captchaAnswer = 0;
+
+            // Generate captcha question
+            function generateCaptcha() {
+                const numberWords = Object.keys(numbers);
+                const randomWord =
+                    numberWords[Math.floor(Math.random() * numberWords.length)];
+                const randomNumber = Math.floor(Math.random() * 10) + 1;
+
+                captchaAnswer = randomNumber + numbers[randomWord];
+
+                const captchaLabel = document.getElementById("captchaQuestion");
+                captchaLabel.textContent = `What is ${randomNumber} + ${randomWord}?`;
+            }
+
+            // Generate initial captcha
+            generateCaptcha();
+
+            document
+                .getElementById("loginForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+                    const captchaInput =
+                        document.getElementById("captcha").value;
+                    const errorBadge = document.getElementById("errorBadge");
+
+                    // Validate credentials and captcha
+                    if (
+                        username === "admin@admin.com" &&
+                        password === "password"
+                    ) {
+                        if (parseInt(captchaInput) === captchaAnswer) {
+                            errorBadge.classList.add("d-none");
+                            document.getElementById("loginTime").value =
+                                new Date().toLocaleString();
+                            this.submit();
+                        } else {
+                            errorBadge.textContent =
+                                "Incorrect captcha answer! Please try again.";
+                            errorBadge.classList.remove("d-none");
+                            generateCaptcha(); // Generate new captcha
+                            document.getElementById("captcha").value = ""; // Clear captcha input
+                        }
+                    } else {
+                        errorBadge.textContent =
+                            "Invalid credentials! Please try again.";
+                        errorBadge.classList.remove("d-none");
+                        generateCaptcha(); // Generate new captcha
+                        document.getElementById("captcha").value = ""; // Clear captcha input
+                    }
+
+                    // Hide error message after 3 seconds
+                    if (!errorBadge.classList.contains("d-none")) {
+                        setTimeout(() => {
+                            errorBadge.classList.add("d-none");
+                        }, 3000);
+                    }
+                });
+        </script>
+    </body>
+</html>

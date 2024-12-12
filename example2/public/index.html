@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login Page</title>
+        <!-- Bootstrap CSS CDN -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <!-- Information Card -->
+                    <div class="card mb-4 shadow">
+                        <div class="card-body">
+                            <h4 class="card-title">Two-Step Login Example</h4>
+                            <p class="card-text">
+                                This is an example of a two-step login process.
+                                First enter email, then password field will
+                                appear.
+                            </p>
+                            <div class="alert alert-info">
+                                <strong>Demo Credentials:</strong><br />
+                                Username: admin@admin.com<br />
+                                Password: password
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login Card -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">Login</h3>
+                            <div
+                                id="errorBadge"
+                                class="alert alert-danger d-none"
+                            ></div>
+                            <form
+                                id="loginForm"
+                                action="welcome.html"
+                                method="get"
+                            >
+                                <div id="formFields">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label"
+                                            >Email</label
+                                        >
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            id="username"
+                                            name="username"
+                                            required
+                                            onchange="validateEmail(this.value)"
+                                        />
+                                    </div>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    name="loginTime"
+                                    id="loginTime"
+                                />
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    Continue
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            let isPasswordFieldCreated = false;
+
+            function validateEmail(email) {
+                const errorBadge = document.getElementById("errorBadge");
+                const formFields = document.getElementById("formFields");
+
+                if (email === "admin@admin.com") {
+                    errorBadge.classList.add("d-none");
+                    if (!isPasswordFieldCreated) {
+                        // Create password field
+                        const passwordDiv = document.createElement("div");
+                        passwordDiv.className = "mb-3";
+                        passwordDiv.innerHTML = `
+                            <label for="password" class="form-label">Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                required
+                            />
+                        `;
+                        formFields.appendChild(passwordDiv);
+                        isPasswordFieldCreated = true;
+                    }
+                } else if (email !== "") {
+                    errorBadge.textContent =
+                        "Invalid email! Use admin@admin.com";
+                    errorBadge.classList.remove("d-none");
+                    // Remove password field if it exists
+                    if (isPasswordFieldCreated) {
+                        const passwordField =
+                            document.querySelector("#password").parentElement;
+                        passwordField.remove();
+                        isPasswordFieldCreated = false;
+                    }
+                    setTimeout(() => {
+                        errorBadge.classList.add("d-none");
+                    }, 3000);
+                }
+            }
+
+            document
+                .getElementById("loginForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password")?.value;
+                    const errorBadge = document.getElementById("errorBadge");
+
+                    if (!isPasswordFieldCreated) {
+                        errorBadge.textContent =
+                            "Please enter a valid email first";
+                        errorBadge.classList.remove("d-none");
+                        setTimeout(() => {
+                            errorBadge.classList.add("d-none");
+                        }, 3000);
+                        return;
+                    }
+
+                    if (
+                        username === "admin@admin.com" &&
+                        password === "password"
+                    ) {
+                        errorBadge.classList.add("d-none");
+                        document.getElementById("loginTime").value =
+                            new Date().toLocaleString();
+                        this.submit();
+                    } else {
+                        errorBadge.textContent =
+                            "Invalid credentials! Please try again.";
+                        errorBadge.classList.remove("d-none");
+                        setTimeout(() => {
+                            errorBadge.classList.add("d-none");
+                        }, 3000);
+                    }
+                });
+        </script>
+    </body>
+</html>
